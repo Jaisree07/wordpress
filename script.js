@@ -8,6 +8,8 @@ class newtest {
     this.textColorInput = document.getElementById('text');
     this.highlightInput = document.getElementById('highlight');
     this.linkButton = document.getElementById('link');
+    this.imageBtn = document.getElementById('image');
+    this.fileInput = document.getElementById('file');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
 
 
@@ -19,6 +21,8 @@ class newtest {
     this.initHighlight();
     this.initLink();
     this.makeLinksClickable();
+    this.initLocalImage();
+    this.initUrlImage();
   }
 
   exec(command, value = null) {
@@ -81,6 +85,8 @@ class newtest {
     }
   });
 }
+
+
  initLink() {
   const linkBtn = document.getElementById('link');
   if (!linkBtn) return;
@@ -101,11 +107,59 @@ class newtest {
         range.insertNode(anchor);
       }
     }
-
     this.editor.focus();
   });
 }
 
+initLocalImage() {
+    this.imageBtn.addEventListener('click',() => this.fileInput.click());
+    this.fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => this.insertImage(ev.target.result);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  insertImage(src) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.style.maxWidth = "100%";
+    img.style.cursor = "pointer";
+    img.classList.add("resizable-img");
+    this.editor.appendChild(img);
+    this.makeImageEditable(img);
+  }
+
+  makeImageEditable(img) {
+    img.addEventListener("click",() => this.selectImage(img));
+  }
+
+  selectImage(img) {
+    this.clearSelectedImages();
+
+    img.style.border = "2px solid black";
+    img.style.resize = "both";
+    img.style.overflow = "auto";
+    const deleteHandler = (e) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        img.remove();
+        document.removeEventListener("keydown", deleteHandler);
+      }
+    };
+
+    document.addEventListener("keydown", deleteHandler);
+  }
+
+  clearSelectedImages() {
+    const imgs = this.editor.querySelectorAll("img");
+    imgs.forEach(i => {
+      i.style.border = "";
+      i.style.resize = "";
+      i.style.overflow = "";
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
