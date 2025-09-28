@@ -33,6 +33,7 @@ class newtest {
     this.initAutoSave();
     // this.initImportDoc();
     this.initExportPDF();
+    this.initPreview();
   }
 
   exec(command, value = null) {
@@ -290,6 +291,24 @@ initExportPDF() {
     };
 
     html2pdf().set(opt).from(content).save();
+  });
+}
+
+initPreview() {
+  const previewBtn = document.querySelector("[data-action='open-preview']");
+  const closeBtn = document.getElementById("closepreview");
+  const modal = document.getElementById("previewmodal");
+  const content = document.getElementById("previewcontent");
+  if (!previewBtn || !closeBtn || !modal || !content) return;
+  previewBtn.addEventListener("click", () => {
+    content.innerHTML = this.editor.innerHTML;
+    modal.style.display = "block";
+    modal.setAttribute("aria-hidden", "false");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
   });
 }
 
