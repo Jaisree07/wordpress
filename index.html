@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WordPress Content Exporter</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrapper">
+    <header class="header">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+          <rect x="2" y="6" width="44" height="36" rx="4" fill="#1f2937"></rect>
+          <path d="M10 16h28v2H10zM10 22h28v2H10zM10 28h18v2H10z" fill="#a78bfa"/>
+        </svg>
+        <div>
+          <h1 class="title">WordPress Content Exporter</h1>
+          <p class="subtitle">Wordpad Editor</p>
+        </div>
+      </div>
+
+      <div class="meta">
+        <label class="field">
+          <span class="label">Title</span>
+          <input id="title" type="text" placeholder="Document title" />
+        </label>
+        <label class="field">
+          <span class="label">Author</span>
+          <input id="author" type="text" placeholder="Author name" />
+        </label>
+        <div class="buttons">
+          <button id="dark" class="ghost" data-action="toggle-dark">Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="editorarea">
+      <aside class="toolbar card" aria-label="Formatting toolbar" id="toolbar">
+        <div class="group" data-group="font">
+          <select id="font" aria-label="Font family">
+            <option value="Inter">Inter</option>
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Courier New">Courier New</option>
+          </select>
+
+          <select id="size" aria-label="Font size">
+            <option value="12">12px</option>
+            <option value="14" selected>14px</option>
+            <option value="16">16px</option>
+            <option value="18">18px</option>
+            <option value="22">22px</option>
+            <option value="26">26px</option>
+          </select>
+        </div>
+
+        <div class="group" data-group="style">
+          <button class="tiny" data-cmd="bold" aria-label="Bold (Ctrl/Cmd+B)">B</button>
+          <button class="tiny" data-cmd="italic" aria-label="Italic (Ctrl/Cmd+I)"><em>I</em></button>
+          <button class="tiny" data-cmd="underline" aria-label="Underline (Ctrl/Cmd+U)"><u>U</u></button>
+          <select id="heading" aria-label="Heading level">
+            <option value="p">Normal</option>
+            <option value="h1">H1</option>
+            <option value="h2">H2</option>
+            <option value="h3">H3</option>
+          </select>
+        </div>
+
+        <div class="group" data-group="align">
+          <button class="btn" data-cmd="justifyLeft" title="Align left">⟵</button>
+          <button class="btn" data-cmd="justifyCenter" title="Align center">↔</button>
+          <button class="btn" data-cmd="justifyRight" title="Align right">⟶</button>
+          <button class="btn" data-cmd="justifyFull" title="Justify">☰</button>
+        </div>
+
+        <div class="group" data-group="colors">
+          <label class="mini">
+            <span class="minilabel">Text</span>
+            <input id="text" type="color" title="Text color" />
+          </label>
+          <label class="mini">
+            <span class="minilabel">Highlight</span>
+            <input id="highlight" type="color" title="Highlight color" />
+          </label>
+        </div>
+
+        <div class="group" data-group="lists">
+          <button class="btn" data-cmd="insertUnorderedList" title="Bulleted list">• List</button>
+          <button class="btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+          <button class="btn" data-cmd="indent" title="Increase indent">→</button>
+          <button class="btn" data-cmd="outdent" title="Decrease indent">←</button>
+        </div>
+
+        <div class="group" data-group="insert">
+          <button class="btn" id="link" data-action="insert-link">Link</button>
+          <button class="btn" id="image" data-action="insert-image-local">Image</button>
+          <button class="btn" id="url" data-action="insert-image-url">Image URL</button>
+          <button class="btn" id="table" data-action="insert-table">Table</button>
+          <input id="file" type="file" accept="image/*" class="file" aria-hidden="true" />
+        </div>
+
+        <div class="group" data-group="page">
+          <button class="ghost" id="page" data-action="insert-page-break">Page Break</button>
+        </div>
+
+        <div class="group" data-group="copy">
+          <button class="btn" id="copyplain" data-action="copy-plain">Copy Plain</button>
+          <button class="btn" id="copyhtml" data-action="copy-html">Copy HTML</button>
+        </div>
+      </aside>
+
+      <article class="editor card" aria-label="Rich text editor region">
+        <div id="editor" class="body" contenteditable="true" spellcheck="true" aria-multiline="true">
+          <h2 class="placeholder">Start</h2>
+          <p>Toolbar</p>
+          <section aria-label="Sample instructions" class="note">
+            <strong>Note:</strong> you will add JavaScript to wire up the toolbar buttons (use data attributes and IDs provided).
+          </section>
+        </div>
+      </article>
+
+      <aside class="side card operations" aria-label="Document operations">
+        <h3>Document</h3>
+        <div class="grid">
+          <button class="full" id="clear" data-action="clear-format">Clear Formatting</button>
+          <button class="full warn" id="reset" data-action="reset-editor">Reset Editor</button>
+          <button class="full" id="find" data-action="open-find">Find & Replace</button>
+          <button class="full" id="autosave" data-action="toggle-autosave">Auto-save</button>
+                 <button id="preview" class="accent" data-action="open-preview">Preview</button>
+        </div>
+
+        <h3>Export</h3>
+        <div class="grid">
+          <button class="primary full" id="doc" data-action="export-doc">Export .doc</button>
+          <button class="primary full" id="pdf" data-action="export-pdf">Export PDF</button>
+        </div>
+
+      </aside>
+    </section>
+
+    <div id="previewmodal" class="modal" aria-hidden="true" role="dialog" aria-label="Preview">
+      <div class="modalcard">
+        <header class="modalhead">
+          <h4>Preview</h4>
+          <button class="tiny" id="closepreview" data-action="close-preview">Close</button>
+        </header>
+        <main id="previewcontent" class="preview"></main>
+      </div>
+    </div>
+        </main>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
