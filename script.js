@@ -1,48 +1,77 @@
-const editor = document.getElementById('editor');
-const formatButtons = document.querySelectorAll('[data-cmd]');
+class newtest {
+  constructor(editorId) {
+    this.editor = document.getElementById(editorId);
+    this.formatButtons = document.querySelectorAll('[data-cmd]');
+    this.fontSelect = document.getElementById('font');
+    this.sizeSelect = document.getElementById('size');
+    this.alignButtons = document.querySelectorAll('[data-cmd^="justify"]');
+    this.textColorInput = document.getElementById('text');
+    this.highlightInput = document.getElementById('highlight');
 
-formatButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const command = button.dataset.cmd;
-    document.execCommand(command, false, null); 
-  });
-});
+    this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
 
-const fontselect = document.getElementById('font');
-fontselect.addEventListener('change', () => {
-  const font = fontselect.value;
-  document.execCommand('fontName', false, font);
-  editor.focus();
-});
 
-const sizeselect = document.getElementById('size');
-const sizeMap = {"12": 2,"14": 3,"16": 4,"18": 5,"22": 6,"24": 7};
-sizeselect.addEventListener('change', () => {
-  const px = sizeselect.value;
-  const size = sizeMap[px];
-  document.execCommand('fontSize', false, size);
-  editor.focus();
-});
+    this.initFormatButtons();
+    this.initFont();
+    this.initFontSize();
+    this.initAlignment();
+    this.initTextColor();
+    this.initHighlight();
+  }
 
-const alignButtons = document.querySelectorAll('[data-cmd^="justify"]');
-alignButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const command = button.dataset.cmd; 
-    document.execCommand(command, false, null);
-    editor.focus(); 
-  });
-});
+  exec(command, value = null) {
+    this.editor.focus();
+    document.execCommand(command, false, value);
+  }
 
-const textcolor = document.getElementById('text');
-textcolor.addEventListener('change', () => {
-  const color = textcolor.value;
-  document.execCommand('foreColor', false, color);
-  editor.focus();
-});
+  initFormatButtons() {
+    this.formatButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const command = button.dataset.cmd;
+        this.exec(command);
+      });
+    });
+  }
 
-const highlightinput = document.getElementById('highlight');
-highlightinput.addEventListener('change', () => {
-  const color = highlightinput.value;
-  document.execCommand('hiliteColor', false, color);
-  editor.focus();
+  initFont() {
+    this.fontSelect.addEventListener('change', () => {
+      const font = this.fontSelect.value;
+      this.exec('fontName', font);
+    });
+  }
+
+  initFontSize() {
+    this.sizeSelect.addEventListener('change', () => {
+      const px = this.sizeSelect.value;
+      const size = this.sizeMap[px];
+      this.exec('fontSize', size);
+    });
+  }
+
+  initAlignment() {
+    this.alignButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const command = button.dataset.cmd;
+        this.exec(command);
+      });
+    });
+  }
+
+  initTextColor() {
+    this.textColorInput.addEventListener('input', () => {
+      const color = this.textColorInput.value;
+      this.exec('foreColor', color);
+    });
+  }
+
+  initHighlight() {
+    this.highlightInput.addEventListener('input', () => {
+      const color = this.highlightInput.value;
+      this.exec('hiliteColor', color);
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const editor = new newtest('editor');
 });
