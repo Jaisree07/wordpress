@@ -29,6 +29,9 @@ class newtest {
     this.initCopyFunctions();
     this.initClear();
     this.initFindReplace();
+    this.initAutoSave();
+    this.initImportDoc();
+    this.initExportPDF();
   }
 
   exec(command, value = null) {
@@ -249,6 +252,38 @@ initClear() {
   });
 }
 
+initFindReplace() {
+  const findBtn = document.getElementById('find');
+  if (!findBtn) return;
+  findBtn.addEventListener('click', () => {
+    const findText = prompt("Enter text to find");
+    if (!findText) return;
+    const replaceText = prompt(`Replace "${findText}" with:`) ?? "";
+    this.editor.innerHTML = this.editor.innerHTML.replaceAll(findText, replaceText);
+    this.editor.focus();
+  });
+}
+
+initAutoSave() {
+  const saved = localStorage.getItem("editorContent");
+  if (saved) this.editor.innerHTML = saved;
+  setInterval(() => {
+    localStorage.setItem("editorContent", this.editor.innerHTML);
+  }, 2000);
+}
+
+initExportPDF() {
+  const pdfBtn = document.getElementById("pdf");
+  pdfBtn.addEventListener("click", () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const text = this.editor.innerText;
+
+    const lines = doc.splitTextToSize(text, 180);
+    doc.text(lines, 10, 10);
+    doc.save("document.pdf");
+  });
+}
 
 
 }
