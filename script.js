@@ -10,6 +10,7 @@ class newtest {
     this.linkButton = document.getElementById('link');
     this.imageBtn = document.getElementById('image');
     this.fileInput = document.getElementById('file');
+    this.tableBtn = document.getElementById('table');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
 
 
@@ -23,6 +24,7 @@ class newtest {
     this.makeLinksClickable();
     this.initLocalImage();
     this.initUrlImage();
+    this.initTable();
   }
 
   exec(command, value = null) {
@@ -160,8 +162,52 @@ initLocalImage() {
       i.style.overflow = "";
     });
   }
-}
 
+initTable() {
+    this.tableBtn.addEventListener('click', () => {
+      const size = prompt("Enter table size as Rows x Columns (e.g., 2x3):", "3x3");
+      if (!size) return;
+      const parts = size.split('x');
+      if (parts.length !== 2) return alert("Invalid format. Use Rows x Columns");
+      const rows = parseInt(parts[0]);
+      const cols = parseInt(parts[1]);
+      if (isNaN(rows) || isNaN(cols)) return alert("Invalid numbers");
+      this.insertTableAtCursor(rows, cols);
+    });
+  }
+
+  insertTableAtCursor(rows, cols) {
+    const table = document.createElement('table');
+    table.style.borderCollapse = "collapse";
+    table.style.width = "100%";
+    table.style.margin = "10px 0";
+
+    for (let r = 0; r < rows; r++) {
+      const tr = document.createElement('tr');
+      for (let c = 0; c < cols; c++) {
+        const td = document.createElement('td');
+        td.style.border = "1px solid #999";
+        td.style.padding = "8px";
+        td.innerHTML = "&nbsp;";
+        td.contentEditable = "true";
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+
+    const sel = window.getSelection();
+    if (!sel.rangeCount) {
+      this.editor.appendChild(table);
+    } else {
+      const range = sel.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(table);
+      const space = document.createTextNode("\n");
+      table.parentNode.insertBefore(space, table.nextSibling);
+    }
+    this.editor.focus();
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   const editor = new newtest('editor');
 });
