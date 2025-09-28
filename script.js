@@ -11,13 +11,14 @@ class newtest {
     this.imageBtn = document.getElementById('image');
     this.fileInput = document.getElementById('file');
     this.tableBtn = document.getElementById('table');
-    // this.pdfBtn = document.getElementById('pdf');
+    this.pdfBtn = document.getElementById('pdf');
     // this.copyPlainBtn = document.getElementById('copyplain');
     // this.copyHtmlBtn = document.getElementById('copyhtml');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
 
 
     this.initFormatButtons();
+    this.initEditorInfo()
     this.initFont();
     this.initFontSize();
     this.initAlignment();
@@ -28,12 +29,14 @@ class newtest {
     this.initLocalImage();
     this.initTable();
     this.initCopyFunctions();
-    this.initClear();
+    this.initReset();
     this.initFindReplace();
     this.initAutoSave();
     // this.initImportDoc();
     this.initExportPDF();
     this.initPreview();
+    this.initClearFormatting();
+    this.initMode();
   }
 
   exec(command, value = null) {
@@ -244,8 +247,8 @@ initCopyFunctions() {
     });
   }
 }
-initClear() {
-  const clearBtn = document.getElementById('clear');
+initReset() {
+  const clearBtn = document.getElementById('reset');
   if (!clearBtn) return;
 
   clearBtn.addEventListener('click', () => {
@@ -278,39 +281,101 @@ initExportPDF() {
   const pdfBtn = document.querySelector("[data-action='export-pdf']");
   if (!pdfBtn) return;
 
-  pdfBtn.addEventListener("click", () => {
-    const content = document.querySelector(".page");
+  const exportPDF = () => {
+    const content = document.getElementById("editor");
     if (!content) return;
 
     const opt = {
-      margin: 5,
+      margin: 10,
       filename: 'document.pdf',
       image: { type: 'jpeg', quality: 1 },
-      html2canvas: { scale: 3, letterRendering: true, useCORS: true, logging: false },
+      html2canvas: { scale: 3, letterRendering: true, useCORS: true },
       jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(content).save();
-  });
+    html2pdf().set(opt).from(content).save().catch(err => console.error(err));
+  };
+
+  pdfBtn.addEventListener("click", exportPDF);
+  pdfBtn.addEventListener("touchend", exportPDF);
 }
 
 initPreview() {
-  const previewBtn = document.querySelector("[data-action='open-preview']");
-  const closeBtn = document.getElementById("closepreview");
-  const modal = document.getElementById("previewmodal");
-  const content = document.getElementById("previewcontent");
-  if (!previewBtn || !closeBtn || !modal || !content) return;
-  previewBtn.addEventListener("click", () => {
-    content.innerHTML = this.editor.innerHTML;
-    modal.style.display = "block";
-    modal.setAttribute("aria-hidden", "false");
+  const previewBtn = document.getElementById('preview');
+  const modal = document.getElementById('previewmodal');
+  const previewContent = document.getElementById('previewcontent');
+  const closeBtn = document.getElementById('closepreview');
+
+  previewBtn.addEventListener('click', () => {
+    previewContent.innerHTML = this.editor.innerHTML;
+    modal.style.display = 'flex'; 
   });
 
-  closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
+  closeBtn.addEventListener('click', () => {
+    modal.style.display = 'none'; 
+    previewContent.innerHTML = '';
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+      previewContent.innerHTML = '';
+    }
   });
 }
+
+initClearFormatting() {
+  const clearBtn = document.getElementById('clear');
+  if (!clearBtn) return;
+  clearBtn.addEventListener('click', () => {
+    const plainText = this.editor.innerText;
+    this.editor.innerHTML = plainText;
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(this.editor);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    this.editor.focus();
+  });
+}
+
+initEditorInfo() {
+  const titleInput = document.getElementById("title");
+  const authorInput = document.getElementById("author");
+  const editorTitle = document.getElementById("editor-title");
+  const editorAuthor = document.getElementById("editor-author");
+  titleInput.addEventListener("input", () => {
+    editorTitle.textContent = titleInput.value;
+  });
+
+  authorInput.addEventListener("input", () => {
+    editorAuthor.textContent = authorInput.value;
+  });
+}
+
+initMode() {
+  const darkBtn = document.getElementById('dark');
+  const darkIcon = document.getElementById('dark-icon');
+  const darkText = document.getElementById('dark-text');
+
+  if (!darkBtn) return;
+
+  darkBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+
+    if (document.body.classList.contains('dark-mode')) {
+      darkIcon.textContent = 'light'; 
+      darkText.textContent = 'Light Mode';
+    } else {
+      darkIcon.textContent = 'dark'; 
+      darkText.textContent = 'Dark Mode';
+    }
+  });
+}
+
+
 
 
 }
