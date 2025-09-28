@@ -25,9 +25,10 @@ class newtest {
     this.initLink();
     this.makeLinksClickable();
     this.initLocalImage();
-
     this.initTable();
     this.initCopyFunctions();
+    this.initClear();
+    this.initFindReplace();
   }
 
   exec(command, value = null) {
@@ -220,11 +221,11 @@ initCopyFunctions() {
       const selection = window.getSelection();
       const text = selection.toString();  
       if (!text) {
-        alert("Please select some text first!");
+        alert("Select the text to copy");
         return;
       }
       navigator.clipboard.writeText(text)
-        .then(() => alert("Selected text copied!"))
+        .then(() => alert("Text Copied"))
         .catch(err => alert("Copy failed: " + err));
     });
   }
@@ -233,11 +234,23 @@ initCopyFunctions() {
     copyHtmlBtn.addEventListener('click', () => {
       const html = this.editor.innerHTML;
       navigator.clipboard.writeText(html)
-        .then(() => alert("HTML copied!"))
+        .then(() => alert("Copied as HTML"))
         .catch(err => alert("Copy failed: " + err));
     });
   }
 }
+initClear() {
+  const clearBtn = document.getElementById('clear');
+  if (!clearBtn) return;
+
+  clearBtn.addEventListener('click', () => {
+    this.editor.innerHTML = "";   
+    this.editor.focus();          
+  });
+}
+
+
+
 }
 document.addEventListener('DOMContentLoaded', () => {
   const editor = new newtest('editor');
