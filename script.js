@@ -23,3 +23,12 @@ sizeselect.addEventListener('change', () => {
   document.execCommand('fontSize', false, size);
   editor.focus();
 });
+
+const alignButtons = document.querySelectorAll('[data-cmd^="justify"]');
+alignButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const command = button.dataset.cmd; // "justifyLeft", "justifyCenter", etc.
+    document.execCommand(command, false, null);
+    editor.focus(); // keep editor focused
+  });
+});
