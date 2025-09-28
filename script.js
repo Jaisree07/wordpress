@@ -11,6 +11,8 @@ class newtest {
     this.imageBtn = document.getElementById('image');
     this.fileInput = document.getElementById('file');
     this.tableBtn = document.getElementById('table');
+    // this.copyPlainBtn = document.getElementById('copyplain');
+    // this.copyHtmlBtn = document.getElementById('copyhtml');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
 
 
@@ -23,8 +25,9 @@ class newtest {
     this.initLink();
     this.makeLinksClickable();
     this.initLocalImage();
-    this.initUrlImage();
+
     this.initTable();
+    this.initCopyFunctions();
   }
 
   exec(command, value = null) {
@@ -207,6 +210,34 @@ initTable() {
     }
     this.editor.focus();
   }
+
+initCopyFunctions() {
+  const copyPlainBtn = document.getElementById('copyplain');
+  const copyHtmlBtn = document.getElementById('copyhtml');
+
+  if (copyPlainBtn) {
+    copyPlainBtn.addEventListener('click', () => {
+      const selection = window.getSelection();
+      const text = selection.toString();  
+      if (!text) {
+        alert("Please select some text first!");
+        return;
+      }
+      navigator.clipboard.writeText(text)
+        .then(() => alert("Selected text copied!"))
+        .catch(err => alert("Copy failed: " + err));
+    });
+  }
+
+  if (copyHtmlBtn) {
+    copyHtmlBtn.addEventListener('click', () => {
+      const html = this.editor.innerHTML;
+      navigator.clipboard.writeText(html)
+        .then(() => alert("HTML copied!"))
+        .catch(err => alert("Copy failed: " + err));
+    });
+  }
+}
 }
 document.addEventListener('DOMContentLoaded', () => {
   const editor = new newtest('editor');
