@@ -27,8 +27,22 @@ sizeselect.addEventListener('change', () => {
 const alignButtons = document.querySelectorAll('[data-cmd^="justify"]');
 alignButtons.forEach(button => {
   button.addEventListener('click', () => {
-    const command = button.dataset.cmd; // "justifyLeft", "justifyCenter", etc.
+    const command = button.dataset.cmd; 
     document.execCommand(command, false, null);
-    editor.focus(); // keep editor focused
+    editor.focus(); 
   });
+});
+
+const textcolor = document.getElementById('text');
+textcolor.addEventListener('change', () => {
+  const color = textcolor.value;
+  document.execCommand('foreColor', false, color);
+  editor.focus();
+});
+
+const highlightinput = document.getElementById('highlight');
+highlightinput.addEventListener('change', () => {
+  const color = highlightinput.value;
+  document.execCommand('hiliteColor', false, color);
+  editor.focus();
 });
