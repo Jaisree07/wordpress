@@ -11,6 +11,7 @@ class newtest {
     this.imageBtn = document.getElementById('image');
     this.fileInput = document.getElementById('file');
     this.tableBtn = document.getElementById('table');
+    // this.pdfBtn = document.getElementById('pdf');
     // this.copyPlainBtn = document.getElementById('copyplain');
     // this.copyHtmlBtn = document.getElementById('copyhtml');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
@@ -30,7 +31,7 @@ class newtest {
     this.initClear();
     this.initFindReplace();
     this.initAutoSave();
-    this.initImportDoc();
+    // this.initImportDoc();
     this.initExportPDF();
   }
 
@@ -273,15 +274,22 @@ initAutoSave() {
 }
 
 initExportPDF() {
-  const pdfBtn = document.getElementById("pdf");
-  pdfBtn.addEventListener("click", () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const text = this.editor.innerText;
+  const pdfBtn = document.querySelector("[data-action='export-pdf']");
+  if (!pdfBtn) return;
 
-    const lines = doc.splitTextToSize(text, 180);
-    doc.text(lines, 10, 10);
-    doc.save("document.pdf");
+  pdfBtn.addEventListener("click", () => {
+    const content = document.querySelector(".page");
+    if (!content) return;
+
+    const opt = {
+      margin: 5,
+      filename: 'document.pdf',
+      image: { type: 'jpeg', quality: 1 },
+      html2canvas: { scale: 3, letterRendering: true, useCORS: true, logging: false },
+      jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(content).save();
   });
 }
 
