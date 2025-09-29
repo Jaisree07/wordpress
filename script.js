@@ -38,6 +38,8 @@ class newtest {
     this.initClearFormatting();
     this.initMode();
     this.clearSavedContentAndStopAutoSave();
+    this.initExportDoc();
+
   }
 
   clearSavedContentAndStopAutoSave() {
@@ -145,56 +147,89 @@ getContrastColor(hex) {
     this.editor.focus();
   });
 }
-
 initLocalImage() {
-    this.imageBtn.addEventListener('click',() => this.fileInput.click());
-    this.fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => this.insertImage(ev.target.result);
-      reader.readAsDataURL(file);
-    });
-  }
+  this.imageBtn.addEventListener('click', () => this.fileInput.click());
 
-  insertImage(src) {
-    const img = document.createElement("img");
-    img.src = src;
-    img.style.maxWidth = "100%";
-    img.style.cursor = "pointer";
-    img.classList.add("resizable-img");
-    this.editor.appendChild(img);
-    this.makeImageEditable(img);
-  }
+  this.fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  makeImageEditable(img) {
-    img.addEventListener("click",() => this.selectImage(img));
-  }
+    const reader = new FileReader();
+    reader.onload = (ev) => this.insertImage(ev.target.result);
+    reader.readAsDataURL(file);
+  });
+}
+insertImage(src) {
+  const container = document.createElement("div");
+  container.classList.add("image-container");
+  container.contentEditable = "false";
 
-  selectImage(img) {
+  const img = document.createElement("img");
+  img.src = src;
+
+  container.appendChild(img);
+  this.editor.appendChild(container);
+
+  container.addEventListener("click", () => {
     this.clearSelectedImages();
+    container.classList.add("selected");
 
-    img.style.border = "2px solid black";
-    img.style.resize = "both";
-    img.style.overflow = "auto";
     const deleteHandler = (e) => {
       if (e.key === "Delete" || e.key === "Backspace") {
-        img.remove();
+        container.remove();
         document.removeEventListener("keydown", deleteHandler);
       }
     };
-
     document.addEventListener("keydown", deleteHandler);
-  }
+  });
+}
 
-  clearSelectedImages() {
-    const imgs = this.editor.querySelectorAll("img");
-    imgs.forEach(i => {
-      i.style.border = "";
-      i.style.resize = "";
-      i.style.overflow = "";
-    });
-  }
+clearSelectedImages() {
+  const containers = this.editor.querySelectorAll(".image-container");
+  containers.forEach(c => {
+    c.classList.remove("selected");
+  });
+}
+
+makeImageEditable(img) {
+  img.addEventListener("click", () => {
+    this.selectImage(img);
+    const confirmResize = confirm("Do you want to resize this image?");
+    if (confirmResize) {
+      img.style.border = "2px dashed blue";
+      img.style.resize = "both";
+      img.style.overflow = "auto";
+    } else {
+      img.style.border = "";
+      img.style.resize = "";
+      img.style.overflow = "";
+    }
+  });
+}
+
+selectImage(img) {
+    
+  this.clearSelectedImages();
+  img.classList.add("selected");
+  const deleteHandler = (e) => {
+    if (e.key === "Delete" || e.key === "Backspace") {
+      img.remove();
+      document.removeEventListener("keydown", deleteHandler);
+    }
+  };
+
+  document.addEventListener("keydown", deleteHandler);
+}
+
+clearSelectedImages() {
+  const imgs = this.editor.querySelectorAll("img");
+  imgs.forEach(i => {
+    i.classList.remove("selected");
+    i.style.border = "";
+    i.style.resize = "";
+    i.style.overflow = "";
+  });
+}
 
 initTable() {
     this.tableBtn.addEventListener('click', () => {
@@ -209,37 +244,76 @@ initTable() {
     });
   }
 
-  insertTableAtCursor(rows, cols) {
-    const table = document.createElement('table');
-    table.style.borderCollapse = "collapse";
-    table.style.width = "100%";
-    table.style.margin = "10px 0";
+insertTableAtCursor(rows, cols) {
+  const container = document.createElement('div');
+  container.contentEditable = "false";
+  container.style.resize = "both";
+  container.style.overflow = "auto";
+  container.style.border = "2px dashed #888";
+  container.style.width = "400px";   
+  container.style.height = "200px";  
+  container.style.margin = "10px 0";
 
-    for (let r = 0; r < rows; r++) {
-      const tr = document.createElement('tr');
-      for (let c = 0; c < cols; c++) {
-        const td = document.createElement('td');
-        td.style.border = "1px solid #999";
-        td.style.padding = "8px";
-        td.innerHTML = "&nbsp;";
-        td.contentEditable = "true";
-        tr.appendChild(td);
-      }
-      table.appendChild(tr);
-    }
 
-    const sel = window.getSelection();
-    if (!sel.rangeCount) {
-      this.editor.appendChild(table);
-    } else {
-      const range = sel.getRangeAt(0);
-      range.deleteContents();
-      range.insertNode(table);
-      const space = document.createTextNode("\n");
-      table.parentNode.insertBefore(space, table.nextSibling);
+  const table = document.createElement('table');
+  table.style.borderCollapse = "collapse";
+  table.style.width = "100%";
+  table.style.height = "100%";      
+  table.style.tableLayout = "fixed";
+  table.style.margin = "0";
+
+  for (let r = 0; r < rows; r++) {
+    const tr = document.createElement('tr');
+    for (let c = 0; c < cols; c++) {
+      const td = document.createElement('td');
+      td.style.border = "1px solid #999";
+      td.style.padding = "8px";
+      td.style.wordBreak = "break-word";
+      td.contentEditable = "true";
+      td.innerHTML = "&nbsp;";
+      tr.appendChild(td);
     }
-    this.editor.focus();
+    table.appendChild(tr);
   }
+
+
+  container.appendChild(table);
+
+
+  const sel = window.getSelection();
+  if (!sel.rangeCount) {
+    this.editor.appendChild(container);
+  } else {
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(container);
+    const space = document.createTextNode("\n");
+    container.parentNode.insertBefore(space, container.nextSibling);
+  }
+
+
+  this.editor.focus();
+
+  container.addEventListener("click", () => {
+    this.clearSelectedTables();
+    container.classList.add("selected");
+
+    const deleteHandler = (e) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        container.remove();
+        document.removeEventListener("keydown", deleteHandler);
+      }
+    };
+    document.addEventListener("keydown", deleteHandler);
+  });
+}
+
+
+clearSelectedTables() {
+  const containers = this.editor.querySelectorAll("div[contenteditable='false']");
+  containers.forEach(c => c.classList.remove("selected"));
+}
+
 
 initCopyFunctions() {
   const copyPlainBtn = document.getElementById('copyplain');
@@ -297,29 +371,36 @@ initAutoSave() {
     localStorage.setItem("editorContent", this.editor.innerHTML);
   }, 2000);
 }
-
 initExportPDF() {
   const pdfBtn = document.getElementById("pdf");
   if (!pdfBtn) return;
 
   pdfBtn.addEventListener("click", () => {
-    const content = document.getElementById("editor"); 
+    const content = document.getElementById("editor");
     if (!content) return;
 
-    html2canvas(content, { scale: 2, useCORS: true }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF("p", "pt", "a4");
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("document.pdf");
-    });
+    const clone = content.cloneNode(true);
+    clone.querySelectorAll('input, button, select, .placeholder').forEach(el => el.remove());
+    const tempContainer = document.createElement('div');
+    tempContainer.style.background = "#ffffff";
+    tempContainer.style.padding = "20px";
+    tempContainer.style.width = "800px"; 
+    tempContainer.appendChild(clone);
+    document.body.appendChild(tempContainer);
+    html2pdf()
+      .set({
+        margin: 10,
+        filename: "document.pdf",
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+        jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+      })
+      .from(tempContainer)
+      .save()
+      .then(() => document.body.removeChild(tempContainer));
   });
 }
+
 
 
 initPreview() {
@@ -376,8 +457,37 @@ initMode() {
   });
 }
 
+initExportDoc() {
+  const docBtn = document.getElementById("doc");
+  if (!docBtn) return;
+
+  docBtn.addEventListener("click", () => {
+    const content = document.getElementById("editor");
+    if (!content) return;
+    const header = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+            xmlns:w='urn:schemas-microsoft-com:office:word' 
+            xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset="utf-8"></head><body>`;
+    const footer = `</body></html>`;
+    const sourceHTML = header + content.innerHTML + footer;
+    const blob = new Blob(['\ufeff', sourceHTML], {
+      type: 'application/msword'
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "document.doc";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+}
+
+
 }
 document.addEventListener('DOMContentLoaded', () => {
   const editor = new newtest('editor');
   editor.initExportPDF();
+  editor.initExportDoc();
 });

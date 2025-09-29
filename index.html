@@ -79,8 +79,6 @@
           <button class="btn" data-cmd="indent" title="Increase indent">→</button>
           <button class="btn" data-cmd="outdent" title="Decrease indent">←</button>
           <button id="dark" class="ghost btn" data-action="toggle-dark">
-          <span id="dark-text">Dark Mode</span>
-          <button id="clear-saved" class="btn">Clear Saved Draft</button>
           </button>
         </div>
 
@@ -99,15 +97,15 @@
 
       <article class="editor card" aria-label="Rich text editor region">
         <div id="editor" class="body" contenteditable="true" spellcheck="true" aria-multiline="true">
- 
+    
    <div id="editor" class="body" contenteditable="true" spellcheck="true">
   <div class="editor-info
-">
+"> 
   <h1 id="editor-title" style="margin: 0; font-size: 1.2rem;">Title: </h1> <br/>
   <h3 id="editor-author" style="margin: 0; font-size: 1rem;">Author: </h3> <br/>
 </div>
 
-<p class="placeholder">Start writing here...</p>
+<!-- <p class="placeholder">Start writing here...</p> -->
 
     
   </div>
@@ -145,8 +143,10 @@
       </div>
     </div>
   </main>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-docx-js/dist/html-docx.js"></script>
+
   <script src="script.js"></script>
 </body>
 </html>

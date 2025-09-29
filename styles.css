@@ -24,6 +24,29 @@ body.dark-mode {
   color: #f5f5f5;               
 }
 
+.image-container {
+  display: inline-block;
+  resize: both;          
+  overflow: hidden;      
+  border: 2px dashed #888;
+  width: 300px;          
+  height: 200px;         
+  margin: 5px 0;
+}
+
+.image-container.selected {
+  border: 2px solid blue;
+}
+
+.image-container img {
+  width: 100%;      /* fill entire container */
+  height: 100%;     /* fill entire container */
+  object-fit: fill; /* stretch image to container */
+  display: block;
+  cursor: pointer;
+}
+
+
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -56,9 +79,11 @@ body.dark-mode {
 }
 .editorarea {
   display: grid;
-  grid-template-columns: 260px 1fr 320px;
+  grid-template-columns: 1fr; 
   gap: 24px;
   align-items: start;
+  margin-left: 80px;  
+  margin-right: 240px; 
 }
 
 .card {
@@ -68,11 +93,32 @@ body.dark-mode {
   box-shadow: var(--shadow);
 }
 
+/* Fix toolbar to the right */
 .toolbar {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: fixed;
+  top: 50px;       /* distance from top */
+  left: 0px;       /* move to left side */
+  z-index: 1000;
 }
+
+/* Fix operations / document box to the right, next to toolbar */
+.operations {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  position: fixed;
+  top: 50px;          /* align with toolbar */
+  right: 80px;        /* adjust so it's next to toolbar */
+  width: 220px;       /* optional width */
+}
+
 
 .group {
   display: flex;
@@ -111,12 +157,7 @@ body.dark-mode {
   line-height: 1.55;
 }
 
-.placeholder {
-  margin: 0;
-  color: #6b7280;
-}
-
-.operations {
+/* .operations {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -124,7 +165,9 @@ body.dark-mode {
   background: #ffffff;
   border-radius: var(--radius);
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-}
+  position: fixed;
+  -moz-box-align: var(--radius);
+} */
 
 .operations h3 {
   margin: 0 0 12px;
@@ -174,6 +217,7 @@ body.dark-mode .toolbar,
 body.dark-mode #toolbar {
   background-color: #374151 !important;
   color: whitesmoke !important;
+  position: fixed;
 }
 
 body.dark-mode .toolbar button,
