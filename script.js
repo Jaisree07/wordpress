@@ -16,9 +16,8 @@ class newtest {
     const clearBtn = document.getElementById('clear-saved');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
     if (clearBtn) {
-  clearBtn.addEventListener('click', () => this.clearSavedContentAndStopAutoSave());
+   clearBtn.addEventListener('click', () => this.clearSavedContentAndStopAutoSave());
 }
-
 
     this.initFormatButtons();
     this.initFont();
@@ -43,7 +42,6 @@ class newtest {
 
   clearSavedContentAndStopAutoSave() {
   localStorage.removeItem('editorContent');
-
   if (this.autoSaveInterval) {
     clearInterval(this.autoSaveInterval);
     this.autoSaveInterval = null;
@@ -302,33 +300,41 @@ initAutoSave() {
 
 initExportPDF() {
   const pdfBtn = document.getElementById("pdf");
-  pdfBtn.addEventListener("click", () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const text = this.editor.innerText;
+  if (!pdfBtn) return;
 
-    const lines = doc.splitTextToSize(text, 180);
-    doc.text(lines, 10, 10);
-    doc.save("document.pdf");
+  pdfBtn.addEventListener("click", () => {
+    const content = document.getElementById("editor"); 
+    if (!content) return;
+
+    html2canvas(content, { scale: 2, useCORS: true }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "pt", "a4");
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("document.pdf");
+    });
   });
 }
+
 
 initPreview() {
   const previewBtn = document.getElementById('preview');
   const modal = document.getElementById('previewmodal');
   const previewContent = document.getElementById('previewcontent');
   const closeBtn = document.getElementById('closepreview');
-
   previewBtn.addEventListener('click', () => {
     previewContent.innerHTML = this.editor.innerHTML;
     modal.style.display = 'flex'; 
   });
-
   closeBtn.addEventListener('click', () => {
     modal.style.display = 'none'; 
     previewContent.innerHTML = '';
   });
-
   modal.addEventListener('click', (e) => {
     if (e.target === modal) {
       modal.style.display = 'none';
@@ -349,13 +355,9 @@ initClearFormatting() {
     range.collapse(false);
     sel.removeAllRanges();
     sel.addRange(range);
-
     this.editor.focus();
   });
 }
-
-
-
 
 initMode() {
   const darkBtn = document.getElementById('dark');
@@ -369,7 +371,6 @@ initMode() {
     if (document.body.classList.contains('dark-mode')) {
       darkText.textContent = 'Light Mode';
     } else {
-      darkIcon.textContent = 'dark'; 
       darkText.textContent = 'Dark Mode';
     }
   });
