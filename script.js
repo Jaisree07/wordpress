@@ -13,13 +13,14 @@ class newtest {
     this.tableBtn = document.getElementById('table');
     this.pdfBtn = document.getElementById('pdf');
     const content = document.querySelector("#editor");
-    // this.copyPlainBtn = document.getElementById('copyplain');
-    // this.copyHtmlBtn = document.getElementById('copyhtml');
+    const clearBtn = document.getElementById('clear-saved');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
+    if (clearBtn) {
+  clearBtn.addEventListener('click', () => this.clearSavedContentAndStopAutoSave());
+}
 
 
     this.initFormatButtons();
-    this.initEditorInfo()
     this.initFont();
     this.initFontSize();
     this.initAlignment();
@@ -33,12 +34,21 @@ class newtest {
     this.initReset();
     this.initFindReplace();
     this.initAutoSave();
-    // this.initImportDoc();
     this.initExportPDF();
     this.initPreview();
     this.initClearFormatting();
     this.initMode();
+    this.clearSavedContentAndStopAutoSave();
   }
+
+  clearSavedContentAndStopAutoSave() {
+  localStorage.removeItem('editorContent');
+
+  if (this.autoSaveInterval) {
+    clearInterval(this.autoSaveInterval);
+    this.autoSaveInterval = null;
+  }
+}
 
   exec(command, value = null) {
     this.editor.focus();
@@ -79,19 +89,31 @@ class newtest {
   }
 
   initTextColor() {
-    this.textColorInput.addEventListener('input',() => {
-      const color = this.textColorInput.value;
-      this.exec('foreColor', color);
-    });
-  }
+  this.textColorInput.addEventListener('input', () => {
+    const color = this.textColorInput.value;
+    this.exec('foreColor', color);
+    this.textColorInput.style.backgroundColor = color;
+    this.textColorInput.style.color = this.getContrastColor(color);
+  });
+}
 
-  initHighlight() {
-    this.highlightInput.addEventListener('input',() => {
-      const color = this.highlightInput.value;
-      this.exec('hiliteColor', color);
-    }); 
-  }
+getContrastColor(hex) {
+  hex = hex.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  return (r*0.299 + g*0.587 + b*0.114) > 186 ? '#000000' : '#ffffff';
+}
 
+
+ initHighlight() {
+  this.highlightInput.addEventListener('input', () => {
+    const color = this.highlightInput.value;
+    this.exec('hiliteColor', color);
+    this.highlightInput.style.backgroundColor = color;
+    this.highlightInput.style.color = this.getContrastColor(color);
+  });
+}
   makeLinksClickable() {
   this.editor.addEventListener('click',(e) => {
     if (e.target.tagName === 'A') {
@@ -332,23 +354,11 @@ initClearFormatting() {
   });
 }
 
-initEditorInfo() {
-  const titleInput = document.getElementById("title");
-  const authorInput = document.getElementById("author");
-  const editorTitle = document.getElementById("editor-title");
-  const editorAuthor = document.getElementById("editor-author");
-  titleInput.addEventListener("input", () => {
-    editorTitle.textContent = titleInput.value;
-  });
 
-  authorInput.addEventListener("input", () => {
-    editorAuthor.textContent = authorInput.value;
-  });
-}
+
 
 initMode() {
   const darkBtn = document.getElementById('dark');
-  const darkIcon = document.getElementById('dark-icon');
   const darkText = document.getElementById('dark-text');
 
   if (!darkBtn) return;
@@ -357,7 +367,6 @@ initMode() {
     document.body.classList.toggle('dark-mode');
 
     if (document.body.classList.contains('dark-mode')) {
-      darkIcon.textContent = 'light'; 
       darkText.textContent = 'Light Mode';
     } else {
       darkIcon.textContent = 'dark'; 
@@ -365,9 +374,6 @@ initMode() {
     }
   });
 }
-
-
-
 
 }
 document.addEventListener('DOMContentLoaded', () => {

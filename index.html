@@ -23,16 +23,7 @@
         </div>
       </div>
 
-      <div class="meta">
-        <label class="field">
-          <span class="label">Title</span>
-          <input id="title" type="text" placeholder="Document title" />
-        </label>
-        <label class="field">
-          <span class="label">Author</span>
-          <input id="author" type="text" placeholder="Author name" />
-        </label>
-      </div>
+      
     </header>
 
     <section class="editorarea">
@@ -90,8 +81,9 @@
           <button class="btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
           <button class="btn" data-cmd="indent" title="Increase indent">→</button>
           <button class="btn" data-cmd="outdent" title="Decrease indent">←</button>
-          <button id="dark" class="ghost" data-action="toggle-dark">
-          <span id="dark-icon">Dark</span> <span id="dark-text">Dark Mode</span>
+          <button id="dark" class="ghost btn" data-action="toggle-dark">
+          <span id="dark-text">Dark Mode</span>
+          <button id="clear-saved" class="btn">Clear Saved Draft</button>
           </button>
         </div>
 
@@ -111,16 +103,15 @@
       <article class="editor card" aria-label="Rich text editor region">
         <div id="editor" class="body" contenteditable="true" spellcheck="true" aria-multiline="true">
  
-    <div class="editor-info">
-      <h1 class="editor-title">Document Title</h1>
-      <p class="editor-author">Author Name</p>
-    </div>
+   <div id="editor" class="body" contenteditable="true" spellcheck="true">
+  <div class="editor-info
+">
+  <h1 id="editor-title" style="margin: 0; font-size: 1.2rem;">Title: </h1> <br/>
+  <h3 id="editor-author" style="margin: 0; font-size: 1rem;">Author: </h3> <br/>
+</div>
 
-    <h2 class="placeholder">Start</h2>
-    <p>Toolbar</p>
-    <section aria-label="Sample instructions" class="note">
-      <strong>Note:</strong> you will add JavaScript to wire up the toolbar buttons (use data attributes and IDs provided).
-    </section>
+<p class="placeholder">Start writing here...</p>
+
     
   </div>
       </article>
