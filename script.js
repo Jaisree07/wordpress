@@ -96,7 +96,6 @@ class newtest {
     this.textColorInput.style.color = this.getContrastColor(color);
   });
 }
-
 getContrastColor(hex) {
   hex = hex.replace('#', '');
   const r = parseInt(hex.substr(0, 2), 16);
@@ -104,8 +103,6 @@ getContrastColor(hex) {
   const b = parseInt(hex.substr(4, 2), 16);
   return (r*0.299 + g*0.587 + b*0.114) > 186 ? '#000000' : '#ffffff';
 }
-
-
  initHighlight() {
   this.highlightInput.addEventListener('input', () => {
     const color = this.highlightInput.value;
@@ -122,7 +119,6 @@ getContrastColor(hex) {
     }
   });
 }
-
 
  initLink() {
   const linkBtn = document.getElementById('link');
@@ -148,9 +144,9 @@ getContrastColor(hex) {
   });
 }
 initLocalImage() {
-  this.imageBtn.addEventListener('click', () => this.fileInput.click());
+  this.imageBtn.addEventListener("click", () => this.fileInput.click());
 
-  this.fileInput.addEventListener('change', (e) => {
+  this.fileInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -159,75 +155,60 @@ initLocalImage() {
     reader.readAsDataURL(file);
   });
 }
+
 insertImage(src) {
   const container = document.createElement("div");
   container.classList.add("image-container");
   container.contentEditable = "false";
+  container.style.display = "inline-block";
+  container.style.resize = "both";
+  container.style.overflow = "hidden";
+  container.style.border = "1px dashed transparent";
+  container.style.maxWidth = "100%"; 
+  container.style.margin = "8px 0";
 
   const img = document.createElement("img");
   img.src = src;
+  img.draggable="false";
+  img.contentEditable = "false";
+  img.style.width = "100%";  
+  img.style.height = "100%";
+  img.style.objectFit = "contain"; 
 
   container.appendChild(img);
-  this.editor.appendChild(container);
+
+  const sel = window.getSelection();
+  if (!sel.rangeCount) {
+    this.editor.appendChild(container);
+  } else {
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(container);
+  }
+
+  this.editor.focus();
 
   container.addEventListener("click", () => {
-    this.clearSelectedImages();
-    container.classList.add("selected");
+  this.clearSelectedImages();
+  container.classList.add("selected");
+  container.style.border = "1px dashed #007bff";
 
-    const deleteHandler = (e) => {
-      if (e.key === "Delete" || e.key === "Backspace") {
-        container.remove();
-        document.removeEventListener("keydown", deleteHandler);
-      }
-    };
-    document.addEventListener("keydown", deleteHandler);
-  });
+  const deleteHandler = (e) => {
+    if ((e.key === "Delete" || e.key === "Backspace") && container.classList.contains("selected")) {
+      e.preventDefault();
+      container.remove();
+      document.removeEventListener("keydown", deleteHandler);
+    }
+  };
+  document.addEventListener("keydown", deleteHandler);
+});
 }
 
 clearSelectedImages() {
   const containers = this.editor.querySelectorAll(".image-container");
   containers.forEach(c => {
     c.classList.remove("selected");
-  });
-}
-
-makeImageEditable(img) {
-  img.addEventListener("click", () => {
-    this.selectImage(img);
-    const confirmResize = confirm("Do you want to resize this image?");
-    if (confirmResize) {
-      img.style.border = "2px dashed blue";
-      img.style.resize = "both";
-      img.style.overflow = "auto";
-    } else {
-      img.style.border = "";
-      img.style.resize = "";
-      img.style.overflow = "";
-    }
-  });
-}
-
-selectImage(img) {
-    
-  this.clearSelectedImages();
-  img.classList.add("selected");
-  const deleteHandler = (e) => {
-    if (e.key === "Delete" || e.key === "Backspace") {
-      img.remove();
-      document.removeEventListener("keydown", deleteHandler);
-    }
-  };
-
-  document.addEventListener("keydown", deleteHandler);
-}
-
-clearSelectedImages() {
-  const imgs = this.editor.querySelectorAll("img");
-  imgs.forEach(i => {
-    i.classList.remove("selected");
-    i.style.border = "";
-    i.style.resize = "";
-    i.style.overflow = "";
+    c.style.border = "1px dashed transparent";
   });
 }
 
@@ -275,11 +256,7 @@ insertTableAtCursor(rows, cols) {
     }
     table.appendChild(tr);
   }
-
-
   container.appendChild(table);
-
-
   const sel = window.getSelection();
   if (!sel.rangeCount) {
     this.editor.appendChild(container);
@@ -295,17 +272,24 @@ insertTableAtCursor(rows, cols) {
   this.editor.focus();
 
   container.addEventListener("click", () => {
-    this.clearSelectedTables();
-    container.classList.add("selected");
+  this.clearSelectedTables();
+  container.classList.add("selected");
 
-    const deleteHandler = (e) => {
-      if (e.key === "Delete" || e.key === "Backspace") {
-        container.remove();
-        document.removeEventListener("keydown", deleteHandler);
-      }
-    };
-    document.addEventListener("keydown", deleteHandler);
-  });
+  const deleteHandler = (e) => {
+    const active = document.activeElement;
+    if (active && active.tagName === "TD" && active.isContentEditable) {
+      return; 
+    }
+
+    if ((e.key === "Delete" || e.key === "Backspace") && container.classList.contains("selected")) {
+      e.preventDefault();
+      container.remove();
+      document.removeEventListener("keydown", deleteHandler);
+    }
+  };
+
+  document.addEventListener("keydown", deleteHandler);
+});
 }
 
 
@@ -488,6 +472,6 @@ initExportDoc() {
 }
 document.addEventListener('DOMContentLoaded', () => {
   const editor = new newtest('editor');
-  editor.initExportPDF();
-  editor.initExportDoc();
+//   editor.initExportPDF();
+//   editor.initExportDoc();
 });
