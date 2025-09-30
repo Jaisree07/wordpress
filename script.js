@@ -14,6 +14,8 @@ class newtest {
     this.pdfBtn = document.getElementById('pdf');
     const content = document.querySelector("#editor");
     const clearBtn = document.getElementById('clear-saved');
+    this.headingSelect = document.getElementById('heading');
+    this.pageBreakBtn = document.getElementById('pagebreak');
     this.sizeMap = { "12": 2, "14": 3, "16": 4, "18": 5, "22": 6, "24": 7 };
     if (clearBtn) {
    clearBtn.addEventListener('click', () => this.clearSavedContentAndStopAutoSave());
@@ -24,6 +26,7 @@ class newtest {
     this.initFontSize();
     this.initAlignment();
     this.initTextColor();
+    this.initHeading();
     this.initHighlight();
     this.initLink();
     this.makeLinksClickable();
@@ -39,8 +42,35 @@ class newtest {
     this.initMode();
     this.clearSavedContentAndStopAutoSave();
     this.initExportDoc();
+    this.initPageBreak();
 
   }
+
+ initPageBreak() {
+  const pageBreakBtn = document.getElementById("pagebreak");
+  if (!pageBreakBtn) return;
+
+  pageBreakBtn.addEventListener("click", () => {
+    const pageBreak = document.createElement("div");
+    pageBreak.className = "page-break";
+
+    pageBreak.innerHTML = `
+      <hr class="break-line" />
+      <div class="new-page" contenteditable="true"><p>Start typing here...</p></div>
+    `;
+    this.editor.appendChild(pageBreak);
+    const newPage = pageBreak.querySelector(".new-page");
+    if (newPage) {
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(newPage);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  });
+}
+
 
   clearSavedContentAndStopAutoSave() {
   localStorage.removeItem('editorContent');
@@ -78,6 +108,15 @@ class newtest {
       this.exec('fontSize', size);
     });
   }
+
+  initHeading() {
+  if (!this.headingSelect) return;
+
+  this.headingSelect.addEventListener('change', () => {
+    const value = this.headingSelect.value; 
+    this.exec('formatBlock', value); 
+  });
+}
 
   initAlignment() {
     this.alignButtons.forEach(button => {
@@ -298,7 +337,6 @@ clearSelectedTables() {
   containers.forEach(c => c.classList.remove("selected"));
 }
 
-
 initCopyFunctions() {
   const copyPlainBtn = document.getElementById('copyplain');
   const copyHtmlBtn = document.getElementById('copyhtml');
@@ -326,6 +364,7 @@ initCopyFunctions() {
     });
   }
 }
+
 initReset() {
   const clearBtn = document.getElementById('reset');
   if (!clearBtn) return;
@@ -371,17 +410,19 @@ initExportPDF() {
     tempContainer.style.width = "800px"; 
     tempContainer.appendChild(clone);
     document.body.appendChild(tempContainer);
-    html2pdf()
-      .set({
-        margin: 10,
-        filename: "document.pdf",
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-        jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
-      })
-      .from(tempContainer)
-      .save()
-      .then(() => document.body.removeChild(tempContainer));
+  html2pdf()
+  .set({
+    margin: 0, 
+    filename: 'document.pdf',
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+    jsPDF: { unit: 'px', format: [800, 1120], orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'] }
+  })
+  .from(tempContainer)
+  .save();
+
+
   });
 }
 
@@ -472,6 +513,29 @@ initExportDoc() {
 }
 document.addEventListener('DOMContentLoaded', () => {
   const editor = new newtest('editor');
-//   editor.initExportPDF();
-//   editor.initExportDoc();
+  // editor.initExportPDF();
+  // editor.initExportDoc();
+  const pageBreakBtn = document.getElementById("pagebreak");
+
+  if (editor && pageBreakBtn) {
+    pageBreakBtn.addEventListener("click", () => {
+      const pageBreak = document.createElement("div");
+      pageBreak.className = "page-break";
+      pageBreak.innerHTML = `
+        <hr class="break-line" />
+        <div class="new-page" contenteditable="true"><p>Start typing here...</p></div>
+      `;
+
+      editor.editor.appendChild(pageBreak);
+      const newPage = pageBreak.querySelector(".new-page");
+      if (newPage) {
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(newPage);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  }
 });

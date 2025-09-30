@@ -11,17 +11,23 @@
 </head>
 <body>
   <main class="wrapper">
-    <header class="header">
-      <div class="brand">
-        <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
-          <rect x="2" y="6" width="44" height="36" rx="4" fill="#1f2937"></rect>
-          <path d="M10 16h28v2H10zM10 22h28v2H10zM10 28h18v2H10z" fill="#a78bfa"/>
-        </svg>
-        <div>
-          <h1 class="title">WordPress</h1>
-        </div>
-      </div>
-    </header>
+   <header class="header">
+  <div class="brand">
+    <div class="left">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="2" y="6" width="44" height="36" rx="4" fill="#1f2937"></rect>
+        <path d="M10 16h28v2H10zM10 22h28v2H10zM10 28h18v2H10z" fill="#a78bfa"/>
+      </svg>
+      <h1 class="title">WordPress</h1>
+    </div>
+    <div class="right">
+      <button id="dark" class="ghost btn" data-action="toggle-dark">
+        <span id="dark-text">Dark Mode</span>
+      </button>
+    </div>
+  </div>
+</header>
+
 
     <section class="editorarea">
       <aside class="toolbar card" aria-label="Formatting toolbar" id="toolbar">
@@ -78,8 +84,8 @@
           <button class="btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
           <button class="btn" data-cmd="indent" title="Increase indent">→</button>
           <button class="btn" data-cmd="outdent" title="Decrease indent">←</button>
-          <button id="dark" class="ghost btn" data-action="toggle-dark">
-          </button>
+        
+
         </div>
 
         <div class="group" data-group="insert">
@@ -96,20 +102,18 @@
       </aside>
 
       <article class="editor card" aria-label="Rich text editor region">
-        <div id="editor" class="body" contenteditable="true" spellcheck="true" aria-multiline="true">
-    
-   <div id="editor" class="body" contenteditable="true" spellcheck="true">
-  <div class="editor-info
-"> 
-  <h1 id="editor-title" style="margin: 0; font-size: 1.2rem;">Title: </h1> <br/>
-  <h3 id="editor-author" style="margin: 0; font-size: 1rem;">Author: </h3> <br/>
-</div>
-
-<!-- <p class="placeholder">Start writing here...</p> -->
-
-    
+  <div id="editor" class="body" contenteditable="true" spellcheck="true" aria-multiline="true">
+    <div class="editor-info"> 
+      <h1 id="editor-title" style="margin: 0; font-size: 1.2rem;">Title: </h1><br/>
+      <h3 id="editor-author" style="margin: 0; font-size: 1rem;">Author: </h3><br/>
+    </div>
   </div>
-      </article>
+</article>
+
+<p class="placeholder">Start writing here...</p>
+
+    
+ 
 
       <aside class="side card operations" aria-label="Document operations">
         <h3>Document</h3>
@@ -118,7 +122,10 @@
           <button class="full warn" id="reset" data-action="reset-editor">Reset Editor</button>
           <button class="full" id="find" data-action="open-find">Find & Replace</button>
           <button class="full" id="autosave" data-action="toggle-autosave">Auto-save</button>
-                 <button id="preview" class="accent primary full" data-action="open-preview">Preview</button>
+           <button class="full" id="pagebreak" data-action="insert-pagebreak">Page Break</button>
+          <button id="preview" class="accent primary full" data-action="open-preview">Preview</button>
+          
+</div>
         </div>
 
         <h3>Export</h3>
